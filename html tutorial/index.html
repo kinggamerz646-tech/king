@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>My Music Player</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #121212;
+    color: white;
+}
+
+header {
+    background: #1db954;
+    padding: 15px;
+    font-size: 22px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.container {
+    padding: 20px;
+    max-width: 600px;
+    margin: auto;
+}
+
+label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+input[type="file"] {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background: #222;
+    color: white;
+    border-radius: 6px;
+    border: 1px solid #333;
+}
+
+button {
+    margin-top: 15px;
+    padding: 12px;
+    width: 100%;
+    font-size: 18px;
+    background: #1db954;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #1ed760;
+}
+
+audio, video {
+    width: 100%;
+    margin-top: 15px;
+    background: black;
+}
+
+.playlist {
+    margin-top: 20px;
+    border-top: 1px solid #333;
+}
+
+.playlist div {
+    padding: 10px;
+    border-bottom: 1px solid #333;
+    cursor: pointer;
+}
+
+.playlist div.active {
+    background: #1db954;
+    color: black;
+}
+</style>
+</head>
+<body>
+
+<header>My Music & Video Player</header>
+
+<div class="container">
+
+    <label>Select audio or video from your device</label>
+    <input type="file" id="fileInput" multiple accept="audio/*,video/*">
+
+    <button id="playBtn">▶ Play Selected</button>
+
+    <audio id="audioPlayer" controls></audio>
+    <video id="videoPlayer" controls></video>
+
+    <div class="playlist" id="playlist"></div>
+
+</div>
+
+<script>
+const fileInput = document.getElementById("fileInput");
+const playBtn = document.getElementById("playBtn");
+const playlist = document.getElementById("playlist");
+
+const audioPlayer = document.getElementById("audioPlayer");
+const videoPlayer = document.getElementById("videoPlayer");
+
+let files = [];
+let currentIndex = -1;
+
+// Hide players initially
+audioPlayer.style.display = "none";
+videoPlayer.style.display = "none";
+
+fileInput.addEventListener("change", () => {
+    files = Array.from(fileInput.files);
+    playlist.innerHTML = "";
+    currentIndex = -1;
+
+    files.forEach((file, index) => {
+        const item = document.createElement("div");
+        item.textContent = file.name;
+
+        item.onclick = () => selectFile(index);
+
+        playlist.appendChild(item);
+    });
+});
+
+function selectFile(index) {
+    currentIndex = index;
+
+    [...playlist.children].forEach(el => el.classList.remove("active"));
+    playlist.children[index].classList.add("active");
+}
+
+playBtn.addEventListener("click", () => {
+    if (currentIndex === -1) {
+        alert("Please select a file from the list");
+        return;
+    }
+
+    const file = files[currentIndex];
+    const url = URL.createObjectURL(file);
+
+    if (file.type.startsWith("audio")) {
+        videoPlayer.pause();
+        videoPlayer.style.display = "none";
+
+        audioPlayer.style.display = "block";
+        audioPlayer.src = url;
+        audioPlayer.play();
+    } else {
+        audioPlayer.pause();
+        audioPlayer.style.display = "none";
+
+        videoPlayer.style.display = "block";
+        videoPlayer.src = url;
+        videoPlayer.play();
+    }
+});
+</script>
+
+</body>
+</ht
